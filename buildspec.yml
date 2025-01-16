@@ -1,0 +1,33 @@
+version: 0.2
+
+phases:
+  install:
+    # runtime-versions:
+    #   java: corretto11
+    commands:
+      - echo Entered the install phase...
+      - sudo yum update -y
+      - sudo amazon-linux-extras enable docker
+      - sudo yum install -y docker
+      - sudo service docker start
+      - sudo usermod -a -G docker ec2-user
+      - docker --version
+      - sudo yum install -y aws-cli
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 022498999044.dkr.ecr.ap-south-1.amazonaws.com
+  build:
+    commands:
+      - echo build phase started..
+      - echo Build started on `date`
+      - echo Building the Docker image
+      - docker build -t dev/nginx-server:codebuild .
+      - echo Tagging the Docker image
+      - docker tag dev/nginx-server:codebuild 022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:codebuild
+  post_build:
+    commands:
+      - echo post_build phase started..
+      - echo Pushing the Docker image to Amazon ECR
+      - docker push 022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:codebuild
+      - echo Build completed on `date`
