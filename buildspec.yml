@@ -9,8 +9,8 @@ phases:
       - sudo yum update -y
       - sudo amazon-linux-extras enable docker
       - sudo yum install -y docker
-      - sudo service docker start
-      - sudo usermod -a -G docker ec2-user
+      # - sudo service docker start
+      # - sudo usermod -a -G docker ec2-user
       - docker --version
       - sudo yum install -y aws-cli
   pre_build:
@@ -31,3 +31,13 @@ phases:
       - echo Pushing the Docker image to Amazon ECR
       - docker push 022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:codebuild
       - echo Build completed on `date`
+      - echo Preparing imagedefinitions.json for CodeDeploy
+      - CONTAINER_NAME="nginx-server"
+      - IMAGE_URI="022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:codebuild"
+      - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $IMAGE_URI > imagedefinitions.json
+      - echo imagedefinitions.json content:
+      - cat imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
