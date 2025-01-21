@@ -22,21 +22,25 @@ phases:
       - echo build phase started..
       - echo Build started on `date`
       - echo Building the Docker image
-      - docker build -t dev/nginx-server:codebuild .
+      - docker build -t dev/nginx-server .
       - echo Tagging the Docker image
-      - docker tag dev/nginx-server:codebuild 022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:codebuild
+      - docker tag dev/nginx-server:latest 022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:latest
   post_build:
     commands:
-      - echo post_build phase started..
-      - echo Pushing the Docker image to Amazon ECR
-      - docker push 022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:codebuild
-      - echo Build completed on `date`
-      - echo Preparing imagedefinitions.json for CodeDeploy
-      - CONTAINER_NAME="nginx-server"
-      - IMAGE_URI="022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:codebuild"
-      - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $IMAGE_URI > imagedefinitions.json
-      - echo imagedefinitions.json content:
-      - cat imagedefinitions.json
+      - echo "Post-build phase started..."
+      - echo "Pushing the Docker image to Amazon ECR"
+      - docker push 022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:latest
+      - echo "Docker image push completed"
+      # Debugging: Check if the file is created
+      - echo "Checking if imagedefinitions.json was created..."
+      - ls -lh | grep imagedefinitions.json || echo "File not found!"
+      - echo "Creating imagedefinitions.json..."
+      - printf '[{"name":"simple-nginx-server","imageUri":"022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:latest"}]' > imagedefinitions.json
+      # Debugging: Confirm file content
+      - echo "Contents of imagedefinitions.json:"
+      - cat imagedefinitions.json || echo "Failed to read file!"
+      - echo "Build completed on $(date)"
 artifacts:
   files:
     - imagedefinitions.json
+    - AppSpec.yml
