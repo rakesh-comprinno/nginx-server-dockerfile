@@ -32,17 +32,20 @@ phases:
       - docker push 022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:latest
       - echo "Docker image push completed"
       # k8s Deployment
+      - echo "Running Kubectl command"
+      - echo "Checking Kubectl version"
+      - kubectl version --client
       - kubectl apply -f deployment.yaml
       # Debugging: Check if the file is created
-      - echo "Checking if imagedefinitions.json was created..."
-      - ls -lh | grep imagedefinitions.json || echo "File not found!"
-      - echo "Creating imagedefinitions.json..."
-      - printf '[{"name":"simple-nginx-server","imageUri":"022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:latest"}]' > imagedefinitions.json
-      # Debugging: Confirm file content
-      - echo "Contents of imagedefinitions.json:"
-      - cat imagedefinitions.json || echo "Failed to read file!"
+      # - echo "Checking if imagedefinitions.json was created..."
+      # - ls -lh | grep imagedefinitions.json || echo "File not found!"
+      # - echo "Creating imagedefinitions.json..."
+      # - printf '[{"name":"simple-nginx-server","imageUri":"022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:latest"}]' > imagedefinitions.json
+      # # Debugging: Confirm file content
+      # - echo "Contents of imagedefinitions.json:"
+      # - cat imagedefinitions.json || echo "Failed to read file!"
       - echo "Build completed on $(date)"
 artifacts:
   files:
-    - imagedefinitions.json
+    # - imagedefinitions.json
     - AppSpec.yml
