@@ -31,6 +31,8 @@ phases:
       - echo "Pushing the Docker image to Amazon ECR"
       - docker push 022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:latest
       - echo "Docker image push completed"
+      # k8s Deployment
+      - kubectl apply -f deployment.yaml
       # Debugging: Check if the file is created
       - echo "Checking if imagedefinitions.json was created..."
       - ls -lh | grep imagedefinitions.json || echo "File not found!"

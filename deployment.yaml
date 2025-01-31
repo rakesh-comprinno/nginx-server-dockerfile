@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginxserver-deployment
+  namespace: nginx-server-app
+  labels:
+    app: nginx
+    tier: frontend
+spec:
+  selector:
+    matchLabels:
+      env: production
+  template:
+    metadata:
+      name: nginx-server
+      labels:
+        env: production
+    spec:
+      containers:
+        - name: nginx
+          # image: nginx
+          image: 022498999044.dkr.ecr.ap-south-1.amazonaws.com/dev/nginx-server:latest
+  replicas: 2

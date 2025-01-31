@@ -7,4 +7,3 @@ Resources:
         LoadBalancerInfo:
           ContainerName: "simple-nginx-server" # Specify the name of your Amazon ECS application's container
           ContainerPort: 80 # Specify the port for your container where traffic reroutes
-
